@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# loop through all attached batteries
+for battery in /sys/class/power_supply/BAT?
+do
+	capacity=$(cat "$battery"/capacity) || exit
+	status=$(cat "$battery"/status)
+
+	printf "%s%s\n" "$(echo "$status" | sed "s/,//;s/Discharging/x /;s/Not charging/x /;s/Charging/[charging] /;s/Unknown/? /;s/Full/[full] /;s/ 0*/ /g;s/ :/ /g")" "$(echo "$capacity" | sed -e 's/$/%/')"
+done
