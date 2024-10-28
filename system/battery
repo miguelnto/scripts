@@ -1,6 +1,13 @@
 #!/bin/sh
 
-# loop through all attached batteries
+# Check if it's a laptop
+if ! ls /sys/class/power_supply > /dev/null 2>&1
+then
+    printf 'no battery\n'
+    exit
+fi
+
+# Loop through all attached batteries
 for battery in /sys/class/power_supply/BAT?
 do
 	capacity=$(cat "$battery"/capacity) || exit
