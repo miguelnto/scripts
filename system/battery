@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# Prints the battery status
+# Depends on:
+# Miguel Neto (11/2024) 
+
 # Loop through all attached batteries and format the info
 for battery in /sys/class/power_supply/BAT?*; do
 	# If non-first battery, print a space separator.
@@ -20,18 +24,3 @@ for battery in /sys/class/power_supply/BAT?*; do
 	printf "%s %s%d%%" "$status" "$warn" "$capacity"; unset warn
 done && printf "\\n"
 
-# Check if it's a laptop
-#if ! ls /sys/class/power_supply > /dev/null 2>&1
-#then
-#    printf 'no battery\n'
-#    exit
-#fi
-
-# Loop through all attached batteries
-#for battery in /sys/class/power_supply/BAT?
-#do
-#	capacity=$(cat "$battery"/capacity) || exit
-#	status=$(cat "$battery"/status)
-
-#	printf "%s%s\n" "$(echo "$status" | sed "s/,//;s/Discharging/x /;s/Not charging/x /;s/Charging/[charging] /;s/Unknown/? /;s/Full/[full] /;s/ 0*/ /g;s/ :/ /g")" "$(echo "$capacity" | sed -e 's/$/%/')"
-#done

@@ -1,0 +1,29 @@
+#!/bin/sh
+
+# Downloads a book from libgen.
+# Depends on: curl, wget, shup
+# Miguel Neto (11/2024)
+
+[ -z "$1" ] && echo "Specify a title to search!" && exit
+search=$(echo "$1" | sed "s/\s/\+/g")
+link="http://libgen.is/search.php?req=$search&open=0&res=25&view=simple&phrase=1&column=title"
+#link="https://libgen.mx/s/$search"
+#https://z-lib.id/s?q=the+foxfire+book
+
+curlout=$(curl -s "$link")
+
+ids=$(echo "$curlout" | grep -Eo "id=.[0-9]+" | sed 's/id=//g;10q')
+[ ! "$ids" ] && echo "No results found." && exit
+for i in $ids; do
+    echo "$curlout" | shup -t "a[$i]" | head -n 1
+done > libnames.txt
+echo "$curlout" | grep -o "http://library.lol/main/.*" | sed "s/'.*//g;10q" > liburls.txt
+
+promp=$(pr -m -t -w 180 libnames.txt liburls.txt | dmenu -l 30 | grep -o "http.*")
+[ ! "$promp" ] && echo "You exited" && exit
+rm libnames.txt liburls.txt
+
+cpromp=$(curl -s "$promp")
+finallink=$(echo "$cpromp" | grep -o 'http.*GET' | sed '1!d;s/\">GET//g')
+#extension=$(echo "$cpromp" | shup "a[href]" | grep -Eo '[A-Za-z]*\>"' | sed '1!d;s/\"//g')
+wget "$finallink"

@@ -1,0 +1,24 @@
+#!/bin/sh
+
+# Searchs for a movie torrent from limetorrents and downloads it
+# Depends on: dmenu, curl, aria2c, shup
+# Miguel Neto (11/2024)
+
+cleanup()
+{
+  rm -f limenames.txt limelinks.txt
+}
+
+[ -z "$1" ] && echo "Specify a title!" && exit
+picker="dmenu -l 30"
+title=$(echo "$1" | sed 's/\s/\-/g')
+result=$(curl -s "https://www.limetorrents.lol/search/all/$title/")
+
+names=$(echo "$result" | shup -t 'div[tt-name]' | sed '1,6d')
+[ ! "$names" ] && echo "No results found." && exit || echo "$names" > limenames.txt
+
+echo "$result" | shup 'a' | grep -o 'http://itorrents.org/.*rel=' | sed 's/..rel=//g' > limelinks.txt
+promp=$(pr -m -t -w 180 limenames.txt limelinks.txt | $picker | grep -o 'http.*')
+[ ! "$promp" ] && cleanup && exit
+cleanup
+aria2c --follow-torrent=mem --seed-time=0 "$promp"

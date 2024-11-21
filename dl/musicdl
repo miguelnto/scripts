@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# Downloads the best quality sound from a youtube video, using its link.
+# Depends on: yt-dlp
+# Miguel Neto (11/2024)
+
+[ -z "$1" ] && echo "Specify a youtube link to download the sound!" && exit
+yt-dlp --embed-metadata -xic -f bestaudio/best "$1"

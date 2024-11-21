@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Set an image or gif as the background.
+# Depends on: xwallpaper, imagemagick, bc, md5sum
+# Miguel Neto (11/2024)
+
+[ "$#" -lt "1" ] || [ "$#" -gt "2" ] && {  echo -e "Please provide an argument.\nExample: $0 /path/name.gif" ; exit 1 ; }
+dir=/tmp/backg
+name=$1
+speed="0.1"
+ext="${name##*.}"
+
+[[ "$ext" != "gif" ]] && xwallpaper --zoom "$name" && exit
+[[ "$name" == "" ]] && { name=$speed ; speed=${name##*-} ; }
+
+[ ! -f "$name" ] && { echo "file not found" ; exit 1 ; }
+hash=$(md5sum "$name" | cut -f1 -d" ")
+
+[[ ! -d "$dir" ]] && mkdir "$dir"
+
+[[ ! -d $dir/$hash ]] && { mkdir "$dir/$hash" ; echo "spliting..." ; magick "$name" -coalesce "$dir/$hash/$hash.png" ; echo ok ; }
+
+if [ "$1" == "auto" ]; then
+    frames=($(ls -v "$dir/$hash"))
+    amount_of_frames=${#frames[@]}
+    frames_per_second=30
+    speed=$(bc <<< "scale=3; ($amount_of_frames/$frames_per_second) * (1/$frames_per_second)")
+fi
+
+while : ; do for i in $(ls "$dir/$hash" -v) ; do xwallpaper --zoom "$dir/$hash/$i" ; sleep "$speed" ; done ; done

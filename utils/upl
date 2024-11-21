@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# Uploads a file to 0x0.st and copies its link to the clipboard.
+# Depends on: libnotify, dunst, dmenu, curl, xclip
+# Miguel Neto (11/2024)
+
+fil=$(find "$(pwd)" -type f | dmenu -i -l 25)
+[ "$fil" = "" ] && exit
+curl -sF "file=@$fil" 0x0.st | xclip -selection c && xclip -o -sel c
+
+notify-send "File uploaded successfully!" "Link copied to clipboard."

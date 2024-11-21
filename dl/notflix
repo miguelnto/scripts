@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# Streams a movie using peerflix with a magnet link on thepiratebay
+# Depends on: peerflix, curl
+# Miguel Neto (11/2024)
+
+echo "           __   _    _
+  _ _  ___| |_ / _| (_)_ __
+ | ' \/ _ \  _|  _| | \ \ /
+ |_||_\___/\__|_| |_|_/_\_\
+
+
+         Loading....
+                          "
+[ -z "$1" ] && echo "Error: Specify a title or use ./notflix -d [title] to download the media." && exit
+name=$(printf '%s' "$1" | sed 's/ /\%20/g')
+url=$(curl -s "https://thepiratebay.party/search/$name/1/99/0")
+magnet=$(echo "$url" | grep -E 'magnet:\?' | sed 's/href\=/ /g' | awk '{print $2}' | sed 's/"/ /g' | head -n 1 | sed 's/ //g')
+[ "$magnet" = "" ] && echo "$n not found." && exit
+# printf '%s\n' "$magnet"
+
+peerflix -l -k "$magnet" ;;

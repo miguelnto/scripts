@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# Extract a tar, rar, or zip archive
+# Depends on: tar, unrar, unzip
+# Miguel Neto (11/2024)
+
+ext=${1##*.}
+[ "$ext" = "gz" ] && tar xvzf "$1"
+[ "$ext" = "tar" ] && tar xvf "$1"
+[ "$ext" = "zip" ] && unzip "$1"
+[ "$ext" = "rar" ] && unrar e "$1"

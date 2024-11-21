@@ -1,4 +1,8 @@
 #!/bin/sh
 
+# Prints the current system volume
+# Depends on: pamixer
+# Miguel Neto (11/2024)
+
 echo "$([ "$(pamixer --get-mute)" = "false" ] && printf 'volume: ' || printf '[muted] ')$(pamixer --get-volume)%"
 

@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# Applies a ｓｌｏｗ　＋　ｒｅｖｅｒｂ effect on a sound file.
+# Depends on: sox, opusfile, libmad
+# Miguel Neto (11/2024)
+
+song_file=$1
+sox "$song_file" "output.mp3" speed 0.78 reverb 58
