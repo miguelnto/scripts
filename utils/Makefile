@@ -11,5 +11,6 @@ install:
 	install -m 0755 opout ${DESTDIR}${INSTALLDIR} 
 	install -m 0755 dmenuhandler ${DESTDIR}${INSTALLDIR} 
 	install -m 0755 compiler ${DESTDIR}${INSTALLDIR} 
+	install -m 0755 qmu ${DESTDIR}${INSTALLDIR} 
 
 .PHONY: install
